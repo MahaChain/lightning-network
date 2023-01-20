@@ -3,22 +3,11 @@
 pragma solidity ^0.8.9;
 
 import {VersionedInitializable} from './proxy/VersionedInitializable.sol';
+import {IPaymentChannel} from './interface/IPaymentChannel.sol';
 
-contract PaymentChannel is VersionedInitializable {
-    struct PaymentChannelData {
-        address owner;
-        uint256 value;
-        uint256 validUntil;
-        bool valid;
-    }
-
+contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     mapping(bytes32 => PaymentChannelData) public channels;
     uint256 public lastId;
-
-    event NewChannel(address indexed owner, bytes32 channel);
-    event Deposit(address indexed owner, bytes32 indexed channel);
-    event Claim(address indexed who, bytes32 indexed channel);
-    event Reclaim(bytes32 indexed channel);
 
     function initialize() external initializer {
         lastId = 0;
