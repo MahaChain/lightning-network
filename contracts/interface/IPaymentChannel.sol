@@ -15,7 +15,10 @@ interface IPaymentChannel {
     event Claim(address indexed who, bytes32 indexed channel);
     event Reclaim(bytes32 indexed channel);
 
-    // function createChannel() external payable;
+    /**
+     * @notice Create a payment channel that can be funded with ARTH
+     */
+    function createChannel(uint256 duration) external payable;
 
     // creates a hash using the recipient and value.
     function getHash(
@@ -24,36 +27,36 @@ interface IPaymentChannel {
         uint value
     ) external pure returns (bytes32);
 
-    // // verify a message (receipient || value) with the provided signature
-    // function verify(
-    //     bytes32 channel,
-    //     address recipient,
-    //     uint value,
-    //     uint8 v,
-    //     bytes32 r,
-    //     bytes32 s
-    // ) external view returns (bool);
+    // verify a message (receipient || value) with the provided signature
+    function verify(
+        bytes32 channel,
+        address recipient,
+        uint value,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external view returns (bool);
 
-    // // claim funds
-    // function claim(
-    //     bytes32 channel,
-    //     address recipient,
-    //     uint value,
-    //     uint8 v,
-    //     bytes32 r,
-    //     bytes32 s
-    // ) external;
+    // claim funds
+    function claim(
+        bytes32 channel,
+        address recipient,
+        uint value,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external;
 
-    // function deposit(bytes32 channel) external payable;
+    function deposit(bytes32 channel) external payable;
 
-    // // reclaim a channel
-    // function reclaim(bytes32 channel) external;
+    // reclaim a channel
+    function reclaim(bytes32 channel) external;
 
-    // function getChannelValue(bytes32 channel) external view returns (uint256);
+    function getChannelValue(bytes32 channel) external view returns (uint256);
 
-    // function getChannelOwner(bytes32 channel) external view returns (address);
+    function getChannelOwner(bytes32 channel) external view returns (address);
 
-    // function getChannelValidUntil(bytes32 channel) external view returns (uint);
+    function getChannelValidUntil(bytes32 channel) external view returns (uint);
 
-    // function isValidChannel(bytes32 channel) external view returns (bool);
+    function isValidChannel(bytes32 channel) external view returns (bool);
 }

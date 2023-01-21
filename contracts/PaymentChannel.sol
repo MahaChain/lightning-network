@@ -14,25 +14,12 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     }
 
     receive() external payable {
-        createChannel(1 days);
+        _createChannel(1 days);
     }
 
-    /**
-     * @notice creates a payment channel funded with ARTH
-     */
-    function createChannel(uint256 duration) public payable {
-        require(duration >= 1 days, 'min duration not met');
-
-        bytes32 channel = keccak256(abi.encode(lastId++));
-
-        channels[channel] = PaymentChannelData(
-            msg.sender,
-            msg.value,
-            block.timestamp + duration,
-            true
-        );
-
-        emit NewChannel(msg.sender, channel);
+    /// @inheritdoc IPaymentChannel
+    function createChannel(uint256 duration) external payable override {
+        _createChannel(duration);
     }
 
     // creates a hash using the recipient and value.
@@ -52,12 +39,8 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) public view returns (bool) {
-        PaymentChannelData memory ch = channels[channel];
-        return
-            ch.valid &&
-            ch.validUntil > block.timestamp &&
-            ch.owner == ecrecover(_getHash(channel, recipient, value), v, r, s);
+    ) external view override returns (bool) {
+        return _verify(channel, recipient, value, v, r, s);
     }
 
     // claim funds
@@ -69,7 +52,7 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         bytes32 r,
         bytes32 s
     ) public {
-        require(!verify(channel, recipient, value, v, r, s), 'invalid sig');
+        require(!_verify(channel, recipient, value, v, r, s), 'invalid sig');
 
         PaymentChannelData memory ch = channels[channel];
 
@@ -87,7 +70,7 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         emit Claim(recipient, channel);
     }
 
-    function deposit(bytes32 channel) public payable {
+    function deposit(bytes32 channel) external payable override {
         require(_isValidChannel(channel));
 
         PaymentChannelData memory ch = channels[channel];
@@ -97,7 +80,7 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     }
 
     // reclaim a channel
-    function reclaim(bytes32 channel) public {
+    function reclaim(bytes32 channel) external override {
         PaymentChannelData memory ch = channels[channel];
         if (ch.value > 0 && ch.validUntil < block.timestamp) {
             payable(ch.owner).transfer(ch.value);
@@ -105,20 +88,52 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         }
     }
 
-    function getChannelValue(bytes32 channel) public view returns (uint256) {
+    function getChannelValue(bytes32 channel) external view returns (uint256) {
         return channels[channel].value;
     }
 
-    function getChannelOwner(bytes32 channel) public view returns (address) {
+    function getChannelOwner(bytes32 channel) external view returns (address) {
         return channels[channel].owner;
     }
 
-    function getChannelValidUntil(bytes32 channel) public view returns (uint) {
+    function getChannelValidUntil(
+        bytes32 channel
+    ) external view returns (uint) {
         return channels[channel].validUntil;
     }
 
     function isValidChannel(bytes32 channel) external view returns (bool) {
         return _isValidChannel(channel);
+    }
+
+    function _createChannel(uint256 duration) internal {
+        require(duration >= 1 days, 'min duration not met');
+
+        bytes32 channel = keccak256(abi.encode(lastId++));
+
+        channels[channel] = PaymentChannelData(
+            msg.sender,
+            msg.value,
+            block.timestamp + duration,
+            true
+        );
+
+        emit NewChannel(msg.sender, channel);
+    }
+
+    function _verify(
+        bytes32 channel,
+        address recipient,
+        uint256 value,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) internal view returns (bool) {
+        PaymentChannelData memory ch = channels[channel];
+        return
+            ch.valid &&
+            ch.validUntil > block.timestamp &&
+            ch.owner == ecrecover(_getHash(channel, recipient, value), v, r, s);
     }
 
     function _isValidChannel(bytes32 channel) internal view returns (bool) {
