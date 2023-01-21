@@ -17,12 +17,12 @@ interface IPaymentChannel {
 
     // function createChannel() external payable;
 
-    // // creates a hash using the recipient and value.
-    // function getHash(
-    //     bytes32 channel,
-    //     address recipient,
-    //     uint value
-    // ) external pure returns (bytes32);
+    // creates a hash using the recipient and value.
+    function getHash(
+        bytes32 channel,
+        address recipient,
+        uint value
+    ) external pure returns (bytes32);
 
     // // verify a message (receipient || value) with the provided signature
     // function verify(

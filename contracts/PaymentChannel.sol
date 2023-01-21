@@ -10,19 +10,25 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     uint256 public lastId;
 
     function initialize() external initializer {
-        lastId = 0;
+        // do nothing
     }
 
-    function getRevision() public pure virtual override returns (uint256) {
-        return 0;
+    receive() external payable {
+        createChannel(1 days);
     }
 
-    function createChannel() external payable {
+    /**
+     * @notice creates a payment channel funded with ARTH
+     */
+    function createChannel(uint256 duration) public payable {
+        require(duration >= 1 days, 'min duration not met');
+
         bytes32 channel = keccak256(abi.encode(lastId++));
+
         channels[channel] = PaymentChannelData(
             msg.sender,
             msg.value,
-            block.timestamp + 1 days,
+            block.timestamp + duration,
             true
         );
 
@@ -33,16 +39,16 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     function getHash(
         bytes32 channel,
         address recipient,
-        uint value
-    ) public pure returns (bytes32) {
-        return keccak256(abi.encode(channel, recipient, value));
+        uint256 value
+    ) external pure override returns (bytes32) {
+        return _getHash(channel, recipient, value);
     }
 
     // verify a message (receipient || value) with the provided signature
     function verify(
         bytes32 channel,
         address recipient,
-        uint value,
+        uint256 value,
         uint8 v,
         bytes32 r,
         bytes32 s
@@ -51,21 +57,22 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         return
             ch.valid &&
             ch.validUntil > block.timestamp &&
-            ch.owner == ecrecover(getHash(channel, recipient, value), v, r, s);
+            ch.owner == ecrecover(_getHash(channel, recipient, value), v, r, s);
     }
 
     // claim funds
     function claim(
         bytes32 channel,
         address recipient,
-        uint value,
+        uint256 value,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) public {
-        if (!verify(channel, recipient, value, v, r, s)) return;
+        require(!verify(channel, recipient, value, v, r, s), 'invalid sig');
 
         PaymentChannelData memory ch = channels[channel];
+
         if (value > ch.value) {
             payable(recipient).transfer(ch.value);
             ch.value = 0;
@@ -81,7 +88,7 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
     }
 
     function deposit(bytes32 channel) public payable {
-        require(isValidChannel(channel));
+        require(_isValidChannel(channel));
 
         PaymentChannelData memory ch = channels[channel];
         ch.value += msg.value;
@@ -110,8 +117,24 @@ contract PaymentChannel is IPaymentChannel, VersionedInitializable {
         return channels[channel].validUntil;
     }
 
-    function isValidChannel(bytes32 channel) public view returns (bool) {
+    function isValidChannel(bytes32 channel) external view returns (bool) {
+        return _isValidChannel(channel);
+    }
+
+    function _isValidChannel(bytes32 channel) internal view returns (bool) {
         PaymentChannelData memory ch = channels[channel];
         return ch.valid && ch.validUntil >= block.timestamp;
+    }
+
+    function _getHash(
+        bytes32 channel,
+        address recipient,
+        uint256 value
+    ) internal pure returns (bytes32) {
+        return keccak256(abi.encode(channel, recipient, value));
+    }
+
+    function getRevision() public pure virtual override returns (uint256) {
+        return 0;
     }
 }
