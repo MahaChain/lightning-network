@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 pragma experimental ABIEncoderV2;
 
 import '../lib/MessageType.sol';
-import '../TokenNetwork.sol';
+import '../network/TokenNetwork.sol';
 
 contract TokenNetworkInternalStorageTest is TokenNetwork {
     constructor(
@@ -54,9 +54,6 @@ contract TokenNetworkInternalStorageTest is TokenNetwork {
         Channel storage channel = channels[channel_identifier];
         Participant storage participant1_state = channel.participants[
             participant1
-        ];
-        Participant storage participant2_state = channel.participants[
-            participant2
         ];
 
         return
@@ -203,21 +200,21 @@ contract TokenNetworkUtilsTest is TokenNetwork {
         return getLockedAmountFromLock(locks, offset);
     }
 
-    function minPublic(uint256 a, uint256 b) public view returns (uint256) {
+    function minPublic(uint256 a, uint256 b) public pure returns (uint256) {
         return min(a, b);
     }
 
     function failsafe_subtractPublic(
         uint256 a,
         uint256 b
-    ) public view returns (uint256, uint256) {
+    ) public pure returns (uint256, uint256) {
         return failsafe_subtract(a, b);
     }
 
     function failsafe_additionPublic(
         uint256 a,
         uint256 b
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return failsafe_addition(a, b);
     }
 

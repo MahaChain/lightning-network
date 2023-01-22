@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import '../lib/ECVerify.sol';
 import '../lib/MessageType.sol';
-import '../network/Token.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '../network/Utils.sol';
 import '../network/TokenNetwork.sol';
 import '../network/TokenNetworkRegistry.sol';
@@ -13,7 +13,7 @@ import './UserDeposit.sol';
 
 contract MonitoringService is Utils {
     // Token to be used for paying the rewards
-    Token public token;
+    IERC20 public token;
 
     // Raiden Service Bundle contract to use for checking if MS has deposits
     ServiceRegistry public service_registry;
@@ -88,7 +88,7 @@ contract MonitoringService is Utils {
             'TokenNetworkRegistry has no code'
         );
 
-        token = Token(_token_address);
+        token = IERC20(_token_address);
         service_registry = ServiceRegistry(_service_registry_address);
         user_deposit = UserDeposit(_udc_address);
         token_network_registry = TokenNetworkRegistry(

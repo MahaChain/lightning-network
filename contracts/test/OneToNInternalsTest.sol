@@ -13,7 +13,7 @@ contract OneToNInternalsTest is OneToN {
     function getSingleSignaturePublic(
         bytes memory signatures,
         uint256 i
-    ) public returns (bytes memory) {
+    ) public pure returns (bytes memory) {
         return OneToN.getSingleSignature(signatures, i);
     }
 }

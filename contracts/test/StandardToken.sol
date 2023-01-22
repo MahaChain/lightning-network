@@ -2,7 +2,7 @@
 /* solium-disable */
 pragma solidity 0.8.10;
 
-import '../Token.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 /*
 This implements ONLY the standard functions and NOTHING else.
@@ -13,7 +13,7 @@ If you deploy this, you won't have anything useful.
 Implements ERC 20 Token standard: https://github.com/ethereum/EIPs/issues/20
 .*/
 
-contract StandardToken is Token {
+contract StandardToken is IERC20 {
     uint256 internal _total_supply;
     mapping(address => uint256) public balances;
     mapping(address => mapping(address => uint256)) allowed;
@@ -87,7 +87,7 @@ contract StandardToken is Token {
         return _total_supply;
     }
 
-    function decimals() public view virtual override returns (uint8 decimals) {
+    function decimals() public view virtual returns (uint8) {
         return 18;
     }
 }

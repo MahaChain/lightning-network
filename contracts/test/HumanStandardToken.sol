@@ -53,7 +53,7 @@ contract HumanStandardToken is StandardToken {
         allowed[msg.sender][_spender] = _value;
         //call the receiveApproval function on the contract you want to be notified. This crafts the function signature manually so one doesn't have to include a contract in here just for this.
         //receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData)
-        (bool success, bytes memory data) = _spender.call(
+        (bool _success, ) = _spender.call(
             abi.encodeWithSignature(
                 'receiveApproval(address,uint256,address,bytes)',
                 msg.sender,
@@ -62,13 +62,13 @@ contract HumanStandardToken is StandardToken {
                 _extraData
             )
         );
-        require(success);
+        require(_success);
 
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-    function decimals() public view override returns (uint8 decimals) {
+    function decimals() public view override returns (uint8) {
         return _decimals;
     }
 }

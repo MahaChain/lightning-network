@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 pragma abicoder v2;
 
 import './Utils.sol';
-import './Token.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './TokenNetwork.sol';
 import './Controllable.sol';
 
@@ -19,7 +19,7 @@ contract TokenNetworkRegistry is Utils, Controllable {
     // Only for the limited Red Eyes release
     uint256 public token_network_created = 0;
 
-    // Token address => TokenNetwork address
+    // IERC20 address => TokenNetwork address
     mapping(address => address) public token_to_token_networks;
 
     event TokenNetworkCreated(

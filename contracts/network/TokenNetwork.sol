@@ -3,9 +3,10 @@
 pragma solidity 0.8.10;
 pragma abicoder v2;
 
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+
 import '../lib/ECVerify.sol';
 import '../lib/MessageType.sol';
-import './Token.sol';
 import './Utils.sol';
 import './SecretRegistry.sol';
 import './Controllable.sol';
@@ -15,7 +16,7 @@ import './Controllable.sol';
 /// token specified in this TokenNetwork contract.
 contract TokenNetwork is Utils, Controllable {
     // Instance of the token used by the channels
-    Token public token;
+    IERC20 public token;
 
     // Instance of SecretRegistry used for storing secrets revealed in a
     // mediating transfer.
@@ -231,7 +232,7 @@ contract TokenNetwork is Utils, Controllable {
             'TN: invalid deposit limits'
         );
 
-        token = Token(_token_address);
+        token = IERC20(_token_address);
 
         secret_registry = SecretRegistry(_secret_registry);
 
@@ -1802,7 +1803,7 @@ contract TokenNetwork is Utils, Controllable {
 
     /// @notice For backwards compatibility and testing only
     /// This can probably be removed once https://github.com/ethereum/web3.py/issues/1677 is fixed.
-    function chain_id() external returns (uint256) {
+    function chain_id() external view returns (uint256) {
         return block.chainid;
     }
 }

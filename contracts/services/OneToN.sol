@@ -182,8 +182,8 @@ contract OneToN is Utils {
         address sender,
         address receiver,
         uint256 amount,
-        uint256 claimable_until,
-        uint256 chain_id,
+        uint256 claimableUntil,
+        uint256 chainId,
         bytes memory signature
     ) internal view returns (address signature_address) {
         bytes32 message_hash = keccak256(
@@ -191,12 +191,12 @@ contract OneToN is Utils {
                 signature_prefix,
                 '188',
                 address(this),
-                chain_id,
+                chainId,
                 uint256(MessageType.MessageTypeId.IOU),
                 sender,
                 receiver,
                 amount,
-                claimable_until
+                claimableUntil
             )
         );
         return ECVerify.ecverify(message_hash, signature);

@@ -4,7 +4,7 @@
 pragma solidity 0.8.10;
 pragma abicoder v2;
 
-import '../network/Token.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '../network/Utils.sol';
 import '../network/Controllable.sol';
 
@@ -183,7 +183,7 @@ contract Deposit {
     // This contract holds ERC20 tokens as deposit until a predetemined point of time.
 
     // The ERC20 token contract that the deposit is about.
-    Token public token;
+    IERC20 public token;
 
     // The address of ServiceRegistry contract that this deposit is associated with.
     // If the address has no code, service_registry.deprecated() call will fail.
@@ -200,7 +200,7 @@ contract Deposit {
     /// @param _withdrawer The address that can withdraw the deposit after the release time
     /// @param _service_registry The address of ServiceRegistry whose deprecation enables immediate withdrawals
     constructor(
-        Token _token,
+        IERC20 _token,
         uint256 _release_at,
         address _withdrawer,
         ServiceRegistryConfigurableParameters _service_registry
@@ -234,7 +234,7 @@ contract Deposit {
 }
 
 contract ServiceRegistry is Utils, ServiceRegistryConfigurableParameters {
-    Token public token;
+    IERC20 public token;
 
     mapping(address => uint256) public service_valid_till;
     mapping(address => string) public urls; // URLs of services for HTTP access
@@ -264,7 +264,7 @@ contract ServiceRegistry is Utils, ServiceRegistryConfigurableParameters {
     // @param _registration_duration The number of seconds (roughly, barring block time & miners'
     // timestamp errors) of a slot gained for a successful deposit
     constructor(
-        Token _token_for_registration,
+        IERC20 _token_for_registration,
         address _controller,
         uint256 _initial_price,
         uint256 _price_bump_numerator,
