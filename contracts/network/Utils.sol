@@ -9,17 +9,15 @@ contract Utils {
     uint256 constant MAX_SAFE_UINT256 = 2 ** 256 - 1;
 
     /// @notice Check if a contract exists
-    /// @param contract_address The address to check whether a contract is
+    /// @param addr The address to check whether a contract is
     /// deployed or not
     /// @return True if a contract exists, false otherwise
-    function contractExists(
-        address contract_address
-    ) public view returns (bool) {
+    function contractExists(address addr) public view returns (bool) {
         uint size;
 
         assembly {
             // solium-disable-line security/no-inline-assembly
-            size := extcodesize(contract_address)
+            size := extcodesize(addr)
         }
 
         return size > 0;

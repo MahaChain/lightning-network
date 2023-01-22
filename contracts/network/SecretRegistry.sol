@@ -18,9 +18,7 @@ contract SecretRegistry {
     /// registered
     function registerSecret(bytes32 secret) public returns (bool) {
         bytes32 secrethash = sha256(abi.encodePacked(secret));
-        if (secrethash_to_timestamp[secrethash] > 0) {
-            return false;
-        }
+        if (secrethash_to_timestamp[secrethash] > 0) return false;
         secrethash_to_timestamp[secrethash] = block.timestamp;
         emit SecretRevealed(secrethash, secret);
         return true;
@@ -29,26 +27,21 @@ contract SecretRegistry {
     /// @notice Registers multiple hash time lock secrets and saves the block
     /// number
     /// @param secrets The array of secrets to be registered
-    /// @return true if all secrets could be registered, false otherwise
+    /// @return completeSuccess true if all secrets could be registered, false otherwise
     function registerSecretBatch(
         bytes32[] memory secrets
-    ) public returns (bool) {
-        bool completeSuccess = true;
+    ) public returns (bool completeSuccess) {
+        completeSuccess = true;
         for (uint i = 0; i < secrets.length; i++) {
-            if (!registerSecret(secrets[i])) {
-                completeSuccess = false;
-            }
+            if (!registerSecret(secrets[i])) completeSuccess = false;
         }
-        return completeSuccess;
     }
 
     /// @notice Get the stored block number at which the secret was revealed
-    /// @param secrethash The hash of the registered secret `keccak256(secret)`
+    /// @param h The hash of the registered secret `keccak256(secret)`
     /// @return The block timestamp at which the secret was revealed
-    function getSecretRevealBlockTime(
-        bytes32 secrethash
-    ) public view returns (uint256) {
-        return secrethash_to_timestamp[secrethash];
+    function getSecretRevealBlockTime(bytes32 h) public view returns (uint256) {
+        return secrethash_to_timestamp[h];
     }
 }
 

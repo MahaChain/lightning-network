@@ -3,8 +3,8 @@
 pragma solidity 0.8.10;
 pragma abicoder v2;
 
-import './lib/ECVerify.sol';
-import './lib/MessageType.sol';
+import '../lib/ECVerify.sol';
+import '../lib/MessageType.sol';
 import './Token.sol';
 import './Utils.sol';
 import './SecretRegistry.sol';

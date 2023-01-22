@@ -4,7 +4,7 @@ pragma abicoder v2;
 
 import '../lib/ECVerify.sol';
 import '../lib/MessageType.sol';
-import '../Utils.sol';
+import '../network/Utils.sol';
 import './ServiceRegistry.sol';
 import './UserDeposit.sol';
 

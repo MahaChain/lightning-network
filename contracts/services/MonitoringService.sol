@@ -4,10 +4,10 @@ pragma abicoder v2;
 
 import '../lib/ECVerify.sol';
 import '../lib/MessageType.sol';
-import '../Token.sol';
-import '../Utils.sol';
-import '../TokenNetwork.sol';
-import '../TokenNetworkRegistry.sol';
+import '../network/Token.sol';
+import '../network/Utils.sol';
+import '../network/TokenNetwork.sol';
+import '../network/TokenNetworkRegistry.sol';
 import './ServiceRegistry.sol';
 import './UserDeposit.sol';
 

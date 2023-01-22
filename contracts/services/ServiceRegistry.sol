@@ -4,9 +4,9 @@
 pragma solidity 0.8.10;
 pragma abicoder v2;
 
-import '../Token.sol';
-import '../Utils.sol';
-import '../Controllable.sol';
+import '../network/Token.sol';
+import '../network/Utils.sol';
+import '../network/Controllable.sol';
 
 contract ServiceRegistryConfigurableParameters is Controllable {
     // After a price is set to set_price at timestamp set_price_at,

@@ -2,8 +2,8 @@
 pragma solidity 0.8.10;
 pragma abicoder v2;
 
-import '../Token.sol';
-import '../Utils.sol';
+import '../network/Token.sol';
+import '../network/Utils.sol';
 
 contract UserDeposit is Utils {
     uint public withdraw_timeout; // time before withdraw is allowed in seconds
